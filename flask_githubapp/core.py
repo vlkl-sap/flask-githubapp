@@ -2,7 +2,8 @@
 import hmac
 import logging
 
-from flask import abort, current_app, jsonify, make_response, request, _app_ctx_stack
+from flask import abort, current_app, jsonify, make_response, request
+from flask.globals import request_ctx
 from github3 import GitHub, GitHubEnterprise
 from werkzeug.exceptions import BadRequest
 
@@ -115,7 +116,7 @@ class GitHubApp(object):
     @property
     def installation_client(self):
         """GitHub client authenticated as GitHub app installation"""
-        ctx = _app_ctx_stack.top
+        ctx = request_ctx
         if ctx is not None:
             if not hasattr(ctx, 'githubapp_installation'):
                 client = self.client
@@ -128,7 +129,7 @@ class GitHubApp(object):
     @property
     def app_client(self):
         """GitHub client authenticated as GitHub app"""
-        ctx = _app_ctx_stack.top
+        ctx = request_ctx
         if ctx is not None:
             if not hasattr(ctx, 'githubapp_app'):
                 client = self.client
